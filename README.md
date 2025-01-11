@@ -1,0 +1,1 @@
+# kde-color-scheme-generator
