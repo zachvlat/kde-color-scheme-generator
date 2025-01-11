@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KDE Plasma Color Scheme Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        .input-container {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 300px;
+            padding: 8px;
+            font-size: 14px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #0078d7;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005a9e;
+        }
+    </style>
+</head>
+<body>
+    <h1>KDE Plasma Color Scheme Generator</h1>
+    <p>Enter three hex colors to generate a color scheme for KDE Plasma:</p>
+
+    <div class="input-container">
+        <label for="color1">Primary Color (Hex, e.g., #bee425):</label>
+        <input type="text" id="color1" placeholder="#000000">
+    </div>
+    <div class="input-container">
+        <label for="color2">Secondary Color (Hex, e.g., #ff5722):</label>
+        <input type="text" id="color2" placeholder="#000000">
+    </div>
+    <div class="input-container">
+        <label for="color3">Accent Color (Hex, e.g., #2196f3):</label>
+        <input type="text" id="color3" placeholder="#000000">
+    </div>
+
+    <button onclick="generateColors()">Generate Color Scheme</button>
+
+    <script>
+        function hexToRgb(hex) {
+            // Remove "#" if it exists
+            hex = hex.replace("#", "");
+            // Convert to RGB components
+            const bigint = parseInt(hex, 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return `${r},${g},${b}`;
+        }
+
+        function generateColors() {
+            // Get input colors
+            const color1 = document.getElementById("color1").value.trim();
+            const color2 = document.getElementById("color2").value.trim();
+            const color3 = document.getElementById("color3").value.trim();
+
+            // Validate hex codes
+            const hexRegex = /^#([A-Fa-f0-9]{6})$/;
+            if (!hexRegex.test(color1) || !hexRegex.test(color2) || !hexRegex.test(color3)) {
+                alert("Please enter valid hex color codes (e.g., #bee425).");
+                return;
+            }
+
+            // Convert hex to RGB
+            const rgb1 = hexToRgb(color1);
+            const rgb2 = hexToRgb(color2);
+            const rgb3 = hexToRgb(color3);
+
+            // Define the color scheme content
+            const colorScheme = `
+[ColorEffects:Disabled]
+Color=${rgb1}
+ColorAmount=0
+ColorEffect=0
+ContrastAmount=0.65
+ContrastEffect=0
+IntensityAmount=0.1
+IntensityEffect=0
+
+[Colors:Button]
+BackgroundNormal=${rgb2}
+ForegroundNormal=${rgb3}
+
+[Colors:Selection]
+BackgroundNormal=${rgb1}
+ForegroundNormal=${rgb2}
+
+[Colors:View]
+BackgroundNormal=${rgb2}
+ForegroundNormal=${rgb3}
+
+[Colors:Window]
+BackgroundNormal=${rgb1}
+ForegroundNormal=${rgb3}
+
+[General]
+ColorScheme=CustomColorScheme
+Name=CustomColorScheme
+shadeSortColumn=true
+
+[KDE]
+contrast=10
+
+[WM]
+activeBackground=${rgb1}
+activeForeground=${rgb3}
+inactiveBackground=${rgb2}
+inactiveForeground=${rgb3}
+`;
+
+            // Create a downloadable file
+            const blob = new Blob([colorScheme], { type: "text/plain" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "CustomColorScheme.colors";
+            link.click();
+        }
+    </script>
+</body>
+</html>
